@@ -71,6 +71,15 @@ class CategoryDao(BaseDAO[Category]):
 
             result = await session.execute(query)
             stats = result.fetchone()
+
+            statistics ={
+                'total_users': stats.total_users,
+                'new_today': stats.new_today,
+                'new_week':stats.new_week,
+                'new_month':stats.new_month
+            }
+
+            logger.info(f"Статистика успешно получена: {statistics}")
         except SQLAlchemyError as e:
             logger.error(f"Ошибка при получении статистики: {e}")
 
