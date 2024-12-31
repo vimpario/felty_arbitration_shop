@@ -1,4 +1,6 @@
-from datetime import datetime, UTC, timedelta
+from datetime import timezone
+from datetime import datetime, timedelta
+
 from typing import Optional, List, Dict
 
 from loguru import logger
@@ -10,9 +12,17 @@ from sqlalchemy.orm import selectinload
 from bot.dao.base import BaseDAO
 from bot.dao.models import User, Purchase, Category, Product
 
+UTC = timezone.utc
+
 class CategoryDao(BaseDAO[Category]):
     model = Category
 
+
+class ProductDao(BaseDAO[Product]):
+    model = Product
+
+class UserDAO(BaseDAO[User]):
+    model = User
     @classmethod
     async def get_purchase_statistics(cls, session: AsyncSession, telegram_id: int) -> Optional[Dict[str, int]]:
         try:
@@ -82,9 +92,9 @@ class CategoryDao(BaseDAO[Category]):
             logger.info(f"Статистика успешно получена: {statistics}")
         except SQLAlchemyError as e:
             logger.error(f"Ошибка при получении статистики: {e}")
-
-class ProductDao(BaseDAO[Product]):
-    model = Product
+    
+class PurchaseDao(BaseDAO[Purchase]):
+    model = Purchase
 
     @classmethod
     async def get_full_summ(cls, session: AsyncSession)-> int:

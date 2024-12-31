@@ -36,7 +36,8 @@ class Product(Base):
     file_id: Mapped[str|None] = mapped_column(Text)
     category_id: Mapped[int] = mapped_column(ForeignKey('categories.id'))
     hidden_content: Mapped[str] = mapped_column(Text)
-    category: Mapped["Category"] = relationship(
+    category: Mapped["Category"] = relationship("Category", back_populates="products")
+    purchases: Mapped[List['Purchase']] = relationship(
         "Purchase",
         back_populates="product",
         cascade="all, delete-orphan"
