@@ -46,10 +46,77 @@ async def page_about(call: CallbackQuery):
     await call.message.answer(
         text=(
             "Данные для тестовой оплаты:\n\n"
-            "Карта: 1111 1111 1111 1026\n"
+            "Карта: 2200 0000 0000 0004\n"
             "Годен до: 12/26\n"
             "CVC-код: 000\n"
         ),
         reply_markup=call.message.reply_markup
     )
 
+@user_router.callback_query(F.data == "my_profile")
+async def page_about(call: CallbackQuery, session_without_commit: AsyncSession):
+    await call.answer("Профиль")
+
+    purchases = await UserDAO.get_purchase_statistics(session=session_without_commit, telegram_id=call.from_user.id)
+    total_amount = purchases.get("total_amount", 0)
+    total_purchases =purchases.get("total_purchases", 0)
+
+    if total_purchases == 0:
+        await call.message.answer(
+            text="У вас пока нет покупок",
+            reply_markup=main_user_kb(call.from_user.id)
+        )
+    else:
+        text = (
+            f"Ваш профиль: \n\n"
+            f"Количество покупок: {total_purchases} "
+            f"Общая сумма: {total_amount} "
+            "Хотите просмотреть детали ваших покупок?"
+        )
+        await call.message.answer(
+            text=text,
+            reply_markup=purchases_kb()
+        )
+
+@user_router.callback_query(F.data == "purchases")
+async def page_user_purchases(call: CallbackQuery, session_without_commit: AsyncSession):
+    await call.answer("Мои покупки")
+
+    purchases = await UserDAO.get_purchased_products(session=session_without_commit, telegram_id=call.from_user.id)
+
+    if not purchases:
+        await call.message.edit_text(
+            text=f"У вас пока нет покупок\nОткройте каталог и выберите что-нибудь интересное",
+            reply_markup=main_user_kb(call.from_user.id)
+        )
+        return
+    
+    for purchase in purchases:
+        product = purchase.product
+        file_text = "Товар включает файл: " if product.file_id else "Товар не включает файл"
+
+        product_text = (
+            f"🛒 <b>Информация о вашем товаре:</b>\n"
+            f"━━━━━━━━━━━━━━━━━━\n"
+            f"🔹 <b>Название:</b> <i>{product.name}</i>\n"
+            f"🔹 <b>Описание:</b>\n<i>{product.description}</i>\n"
+            f"🔹 <b>Цена:</b> <b>{product.price} ₽</b>\n"
+            f"🔹 <b>Закрытое описание:</b>\n<i>{product.hidden_content}</i>\n"
+            f"━━━━━━━━━━━━━━━━━━\n"
+            f"{file_text}\n"
+        )
+
+        if product.file_id:
+            await call.message.answer_document(
+                document=product.file_id,
+                caption=product_text,
+            )
+        else:
+            await call.message.answer(
+                text=product_text,
+            )
+
+    await call.message.answer(
+        text="Спасибо за доверие",
+        reply_markup=main_user_kb(call.from_user.id)
+    )

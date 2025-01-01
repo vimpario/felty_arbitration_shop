@@ -108,7 +108,6 @@ async def admin_process_add_product(call: CallbackQuery, state: FSMContext):
     await state.update_data(last_msg_id=msg.message_id)
     await state.set_state(AddProduct.name)
 
-
 @admin_router.message(F.text, F.from_user.id.in_(settings.ADMIN_IDS), AddProduct.name)
 async def admin_process_name(message: Message, state: FSMContext):
     await state.update_data(name=message.text)
@@ -116,7 +115,6 @@ async def admin_process_name(message: Message, state: FSMContext):
     msg = await message.answer(text="Теперь дайте короткое описание товару: ", reply_markup=cancel_kb_inline())
     await state.update_data(last_msg_id=msg.message_id)
     await state.set_state(AddProduct.description)
-
 
 @admin_router.message(F.text, F.from_user.id.in_(settings.ADMIN_IDS), AddProduct.description)
 async def admin_process_description(message: Message, state: FSMContext, session_without_commit: AsyncSession):
@@ -126,7 +124,6 @@ async def admin_process_description(message: Message, state: FSMContext, session
     msg = await message.answer(text="Теперь выберите категорию товара: ", reply_markup=catalog_admin_kb(catalog_data))
     await state.update_data(last_msg_id=msg.message_id)
     await state.set_state(AddProduct.category_id)
-
 
 @admin_router.callback_query(F.data.startswith("add_category_"),
                              F.from_user.id.in_(settings.ADMIN_IDS),
@@ -138,7 +135,6 @@ async def admin_process_category(call: CallbackQuery, state: FSMContext):
     msg = await call.message.edit_text(text="Введите цену товара: ", reply_markup=cancel_kb_inline())
     await state.update_data(last_msg_id=msg.message_id)
     await state.set_state(AddProduct.price)
-
 
 @admin_router.message(F.text, F.from_user.id.in_(settings.ADMIN_IDS), AddProduct.price)
 async def admin_process_price(message: Message, state: FSMContext):
@@ -156,7 +152,6 @@ async def admin_process_price(message: Message, state: FSMContext):
         await message.answer(text="Ошибка! Необходимо ввести числовое значение для цены.")
         return
 
-
 @admin_router.callback_query(F.data == "without_file", F.from_user.id.in_(settings.ADMIN_IDS), AddProduct.file_id)
 async def admin_process_without_file(call: CallbackQuery, state: FSMContext):
     await state.update_data(file_id=None)
@@ -167,7 +162,6 @@ async def admin_process_without_file(call: CallbackQuery, state: FSMContext):
     await state.update_data(last_msg_id=msg.message_id)
     await state.set_state(AddProduct.hidden_content)
 
-
 @admin_router.message(F.document, F.from_user.id.in_(settings.ADMIN_IDS), AddProduct.file_id)
 async def admin_process_without_file(message: Message, state: FSMContext):
     await state.update_data(file_id=message.document.file_id)
@@ -177,7 +171,6 @@ async def admin_process_without_file(message: Message, state: FSMContext):
         reply_markup=cancel_kb_inline())
     await state.update_data(last_msg_id=msg.message_id)
     await state.set_state(AddProduct.hidden_content)
-
 
 @admin_router.message(F.text, F.from_user.id.in_(settings.ADMIN_IDS), AddProduct.hidden_content)
 async def admin_process_hidden_content(message: Message, state: FSMContext, session_without_commit: AsyncSession):
@@ -205,7 +198,6 @@ async def admin_process_hidden_content(message: Message, state: FSMContext, sess
         msg = await message.answer(text=product_text, reply_markup=admin_confirm_kb())
     await state.update_data(last_msg_id=msg.message_id)
     await state.set_state(AddProduct.confirm_add)
-
 
 @admin_router.callback_query(F.data == "confirm_add", F.from_user.id.in_(settings.ADMIN_IDS))
 async def admin_process_confirm_add(call: CallbackQuery, state: FSMContext, session_with_commit: AsyncSession):

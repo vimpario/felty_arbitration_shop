@@ -90,8 +90,10 @@ class UserDAO(BaseDAO[User]):
             }
 
             logger.info(f"Статистика успешно получена: {statistics}")
+            return statistics
         except SQLAlchemyError as e:
             logger.error(f"Ошибка при получении статистики: {e}")
+            raise
     
 class PurchaseDao(BaseDAO[Purchase]):
     model = Purchase
