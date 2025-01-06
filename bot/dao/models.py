@@ -31,9 +31,9 @@ class Category(Base):
     
 class Product(Base):
     name: Mapped[str] = mapped_column(Text)
-    description: Mapped[str]= mapped_column(Text)
+    description: Mapped[str] = mapped_column(Text)
     price: Mapped[int]
-    file_id: Mapped[str|None] = mapped_column(Text)
+    file_id: Mapped[str | None] = mapped_column(Text)
     category_id: Mapped[int] = mapped_column(ForeignKey('categories.id'))
     hidden_content: Mapped[str] = mapped_column(Text)
     category: Mapped["Category"] = relationship("Category", back_populates="products")

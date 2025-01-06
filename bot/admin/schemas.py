@@ -8,5 +8,5 @@ class ProductModel(BaseModel):
     description: str = Field(..., min_length=1)
     price: int = Field(..., gt=0)
     category_id: int = Field(..., gt=0)
-    field_id: str | None = None
+    file_id: str | None = None
     hidden_content: str= Field(...,min_length=1)
