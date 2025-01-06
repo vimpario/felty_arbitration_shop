@@ -15,6 +15,16 @@ def main_user_kb(user_id: int) -> InlineKeyboardMarkup:
     kb.adjust(1)
     return kb.as_markup()
 
+def product_navigation_kb(category_id: int, product_index: int, total_products: int) -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    prev_index = (product_index -1) % total_products
+    next_index = (product_index + 1) % total_products
+    kb.button(text="<-", callback_data=f"prev_{category_id}_{prev_index}")
+    kb.button(text=f"{product_index + 1}/{total_products}", callback_data="noop")
+    kb.button(text="->", callback_data=f"next_{category_id}_{prev_index}")
+    kb.adjust(1)
+    return kb.as_markup()
+
 def catalog_kb(catalog_data: List[Category]) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     for category in catalog_data:

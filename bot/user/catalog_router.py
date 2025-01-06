@@ -5,7 +5,7 @@ from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession
 from bot.config import bot, settings
 from bot.dao.dao import UserDAO, CategoryDao, ProductDao, PurchaseDao
-from bot.user.kbs import main_user_kb, catalog_kb, product_kb, get_product_buy_kb
+from bot.user.kbs import main_user_kb, catalog_kb, product_kb, get_product_buy_kb, product_navigation_kb
 from bot.user.schemas import TelegramIDModel, ProductCategoryIDModel, PaymentData
 
 catalog_router = Router()
@@ -28,17 +28,18 @@ async def page_catalog_products(call: CallbackQuery, session_without_commit: Asy
     count_products = len(products_category)
     if count_products:
         await call.answer(f"В данной категории {count_products} товаров.")
-        for product in products_category:
-            product_text = (
-                f"📦 <b>Название товара:</b> {product.name}\n\n"
-                f"💰 <b>Цена:</b> {product.price} руб.\n\n"
-                f"📝 <b>Описание:</b>\n<i>{product.description}</i>\n\n"
-                f"━━━━━━━━━━━━━━━━━━"
-            )
-            await call.message.answer(
-                product_text,
-                reply_markup=product_kb(product.id, product.price)
-            )
+        # for product in products_category:
+        product_text = (
+            f"📦 <b>Название товара:</b> {products_category[0].name}\n\n"
+            f"💰 <b>Цена:</b> {products_category[0].price} руб.\n\n"
+            f"📝 <b>Описание:</b>\n<i>{products_category[0].description}</i>\n\n"
+            f"━━━━━━━━━━━━━━━━━━"
+        )
+        await call.message.answer(
+            product_text,
+            reply_markup=product_kb(products_category[0].id, products_category[0].price)
+        )
+        
     else:
         await call.answer("В данной категории нет товаров.")
 
