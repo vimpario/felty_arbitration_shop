@@ -1,6 +1,6 @@
 from typing import List
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import BigInteger, Text, ForeignKey
+from sqlalchemy import BigInteger, Text, ForeignKey,Boolean
 from bot.dao.database import Base
 
 class User(Base):
@@ -37,6 +37,7 @@ class Product(Base):
     category_id: Mapped[int] = mapped_column(ForeignKey('categories.id'))
     hidden_content: Mapped[str] = mapped_column(Text)
     category: Mapped["Category"] = relationship("Category", back_populates="products")
+    is_buyed: Mapped[bool] = mapped_column(Boolean, default=False)
     purchases: Mapped[List['Purchase']] = relationship(
         "Purchase",
         back_populates="product",
@@ -44,7 +45,7 @@ class Product(Base):
     )
 
     def __repr__(self):
-        return f"<Product(id={self.id}, name='{self.name}', price={self.price})>"
+        return f"<Product(id={self.id}, name='{self.name}', price={self.price}, is_buyed={self.is_buyed})>"
     
 class Purchase(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))

@@ -10,4 +10,5 @@ class ProductModel(BaseModel):
     category_id: int = Field(..., gt=0)
     file_id: str | None = None
     hidden_content: str= Field(...,min_length=1)
+    is_buyed: bool = Field(default=False)  
     #NOW IT SAVE PRODUCT WITH FILE

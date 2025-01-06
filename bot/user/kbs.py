@@ -10,7 +10,6 @@ def main_user_kb(user_id: int) -> InlineKeyboardMarkup:
     kb.button(text="👤 Мои покупки", callback_data="my_profile")
     kb.button(text="🛍 Каталог", callback_data="catalog")
     kb.button(text="ℹ️ О магазине", callback_data="about")
-    # kb.button(text="🌟 Поддержать автора 🌟", url='https://t.me/tribute/app?startapp=deLN')
     if user_id in settings.ADMIN_IDS:
         kb.button(text="⚙️ Админ панель", callback_data="admin_panel")
     kb.adjust(1)

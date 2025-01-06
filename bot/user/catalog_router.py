@@ -12,7 +12,7 @@ catalog_router = Router()
 
 @catalog_router.callback_query(F.data == "catalog")
 async def page_catalog(call: CallbackQuery, session_without_commit: AsyncSession):
-    await call.answer("Загрузка каталога...")
+    # await call.answer("Загрузка каталога...")
     catalog_data = await CategoryDao.find_all(session=session_without_commit)
 
     await call.message.edit_text(
@@ -24,7 +24,7 @@ async def page_catalog(call: CallbackQuery, session_without_commit: AsyncSession
 async def page_catalog_products(call: CallbackQuery, session_without_commit: AsyncSession):
     category_id = int(call.data.split("_")[-1])
     products_category = await ProductDao.find_all(session=session_without_commit,
-                                                  filters=ProductCategoryIDModel(category_id=category_id))
+                                                  filters=ProductCategoryIDModel(category_id=category_id, is_buyed=False))
     count_products = len(products_category)
     if count_products:
         await call.answer(f"В данной категории {count_products} товаров.")
@@ -81,7 +81,14 @@ async def successful_payment(message: Message, session_with_commit: AsyncSession
     }
 
     await PurchaseDao.add(session=session_with_commit, values=PaymentData(**payment_data))
+    #Old without is_buyed flag
+    # product_data = await ProductDao.find_one_or_none_by_id(session=session_with_commit, data_id=int(product_id))
+
+    #new with is_buyed flag
     product_data = await ProductDao.find_one_or_none_by_id(session=session_with_commit, data_id=int(product_id))
+    product_data.is_buyed = True
+
+    #end new
 
     for admin_id in settings.ADMIN_IDS:
         try:
@@ -123,3 +130,6 @@ async def successful_payment(message: Message, session_with_commit: AsyncSession
             text=product_text,
             reply_markup=main_user_kb(message.from_user.id)
         )
+
+    session_with_commit.add(product_data)
+    await session_with_commit.commit()
