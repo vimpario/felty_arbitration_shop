@@ -1,0 +1,15 @@
+
+{
+  "admin": {
+    "cancel": "Отмена",
+    "statistic": "Статистика",
+    "manage_products": "Управлять товарами",
+    "home": "На главную",
+    "add_product": "Добавить товар",
+    "delete_product": "Удалить товар",
+    "confirm": "Все верно",
+    "delete": "Удалить",
+    "admin_panel": "Админ панель",
+    "without_file": "Без файла"
+  }
+}
