@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\Victor\Desktop\workspace\felty_arbitration_shop\.venv"
+VIRTUAL_ENV="C:\Users\sindr\OneDrive\Рабочий стол\workspace\felty_arbitration_shop\.venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
