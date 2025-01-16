@@ -18,9 +18,6 @@ class ProductCategoryIDModel(BaseModel):
     category_id: int
     is_buyed: bool
 
-
-
-
 class PaymentData(BaseModel):
     user_id: int = Field(..., description="ID пользователя Telegram")
     payment_id: str = Field(..., max_length=255, description="Уникальный ID платежа")

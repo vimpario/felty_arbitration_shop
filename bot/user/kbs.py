@@ -40,6 +40,12 @@ def purchases_kb() -> InlineKeyboardMarkup:
     kb.adjust(1)
     return kb.as_markup()
 
+def purchase_count_kb() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    kb.button(text="Назад", callback_data="catalog")
+    kb.adjust(1)
+    return kb.as_markup()
+
 def product_kb(product_id, price) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     kb.button(text="💸 Купить", callback_data=f"buy_{product_id}_{price}")
@@ -49,6 +55,7 @@ def product_kb(product_id, price) -> InlineKeyboardMarkup:
     return kb.as_markup()
 
 def get_product_buy_kb(price) -> InlineKeyboardMarkup:
+    
     return InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text=f'Оплатить {price}₽', pay=True)],
         [InlineKeyboardButton(text='Отменить', callback_data='home')]

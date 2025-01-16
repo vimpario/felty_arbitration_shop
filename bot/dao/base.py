@@ -1,4 +1,4 @@
-from typing import List, Any, TypeVar, Generic
+from typing import List, Generic, TypeVar
 from pydantic import BaseModel
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.future import select
@@ -31,7 +31,6 @@ class BaseDAO(Generic[T]):
 
     @classmethod
     async def find_one_or_none(cls, session: AsyncSession, filters:BaseModel):
-        
         filter_dict = filters.model_dump(exclude_unset=True)
         logger.info(f"Поиск одной записи {cls.model.__name__} по фильтрам: {filter_dict}")
         try:
@@ -108,4 +107,19 @@ class BaseDAO(Generic[T]):
             return count
         except SQLAlchemyError as e:
             logger.error(f"Ошибка при подсчета записей: {e}")
+            raise
+
+    @classmethod
+    async def find_unpurchased_items(cls, session: AsyncSession, limit: int) -> List[T]:
+        logger.info(f"Поиск {limit} некупленных {cls.model.__name__} товаров")
+        try:
+            
+            query = select(cls.model).filter_by(is_buyed=False).limit(limit)
+            logger.info(f"SQL-запрос: {query}")
+            result = await session.execute(query)
+            items = result.scalars().all()
+            logger.info(f"Найдено {len(items)} некупленных товаров")
+            return items
+        except SQLAlchemyError as e:
+            logger.error(f"Ошибка поиска некупленных товаров {e}")
             raise

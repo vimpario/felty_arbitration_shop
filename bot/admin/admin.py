@@ -222,8 +222,6 @@ async def admin_process_hidden_content(message: Message, state: FSMContext, sess
                     f'<b>{file_text}</b>')
     await process_dell_text_msg(message, state)
 
-    
-
     if file_id:
         msg = await message.answer_document(document=file_id, caption=product_text, reply_markup=admin_confirm_kb())
     else:
